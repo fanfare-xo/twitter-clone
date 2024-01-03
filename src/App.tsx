@@ -1,9 +1,13 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import * as styled from 'styled-components';
+import reset from 'styled-reset';
+import { useEffect, useState } from 'react';
 import Layout from './components/layout';
 import Home from './routes/home';
 import Profile from './routes/profile';
 import Login from './routes/login';
 import CreateAccount from './routes/create-account';
+import LoadingScreen from './components/loading-screen';
 
 const router = createBrowserRouter([
   {
@@ -30,8 +34,45 @@ const router = createBrowserRouter([
   },
 ]);
 
+const GlobalStyle = styled.createGlobalStyle`
+  ${reset}
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background-color: black;
+    color: white;
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      'Open Sans',
+      'Helvetica Neue',
+      sans-serif;
+  }
+`;
+
 function App() {
-  return <RouterProvider router={router} />;
+  const [isLoading, setLoading] = useState(true);
+
+  const init = async () => {
+    setTimeout(() => setLoading(false), 1000);
+  };
+  useEffect(() => {
+    init();
+  }, []);
+
+  return (
+    <>
+      <GlobalStyle />
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+    </>
+  );
 }
 
 export default App;
