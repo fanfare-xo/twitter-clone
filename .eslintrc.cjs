@@ -18,5 +18,6 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react-refresh/only-export-components': 'warn',
+    'import/no-extraneous-dependencies': 'off',
   },
 };
