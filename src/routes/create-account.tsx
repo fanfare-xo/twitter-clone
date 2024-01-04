@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -42,16 +43,71 @@ const Error = styled.span`
 `;
 
 function CreateAccount() {
+  const [isLoading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === 'username') {
+      setUsername(value);
+    } else if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      // 회원 등록 로직
+    } catch (e) {
+      // 에러 발생 로직
+    } finally {
+      setLoading(false);
+      console.log(username, email, password);
+    }
+  };
+
   return (
     <Wrapper>
       <Title>Join 𝕏</Title>
-      <Form>
-        <Input name='username' type='text' placeholder='Username' required />
-        <Input name='email' type='text' placeholder='Email' required />
-        <Input name='password' type='text' placeholder='Password' required />
-        <Input type='submit' />
+      <Form onSubmit={onSubmit}>
+        <Input
+          value={username}
+          onChange={onChange}
+          name='username'
+          type='text'
+          placeholder='username'
+          required
+        />
+        <Input
+          value={email}
+          onChange={onChange}
+          name='email'
+          type='text'
+          placeholder='email'
+          required
+        />
+        <Input
+          value={password}
+          onChange={onChange}
+          name='password'
+          type='password'
+          placeholder='password'
+          required
+        />
+        <Input
+          value={isLoading ? 'Loading...' : 'Create Account'}
+          type='submit'
+        />
       </Form>
-      <Error>Error Message</Error>
+      {error !== '' ? <Error>Error Message</Error> : null}
     </Wrapper>
   );
 }
