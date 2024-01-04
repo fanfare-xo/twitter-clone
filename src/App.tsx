@@ -8,6 +8,7 @@ import Profile from './routes/profile';
 import Login from './routes/login';
 import CreateAccount from './routes/create-account';
 import LoadingScreen from './components/loading-screen';
+import { auth } from './firebase';
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,8 @@ function App() {
   const [isLoading, setLoading] = useState(true);
 
   const init = async () => {
-    setTimeout(() => setLoading(false), 1000);
+    await auth.authStateReady();
+    setLoading(false);
   };
   useEffect(() => {
     init();
