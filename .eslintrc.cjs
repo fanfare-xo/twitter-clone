@@ -19,5 +19,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react-refresh/only-export-components': 'warn',
     'import/no-extraneous-dependencies': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'import/no-cycle': 'off',
   },
 };
