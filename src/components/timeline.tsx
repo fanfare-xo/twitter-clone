@@ -1,4 +1,4 @@
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebase';
@@ -28,12 +28,13 @@ function Timeline() {
       collection(db, 'tweets'),
       orderBy('createdAt', 'desc'),
     );
-    const snapshot = await getDocs(tweetsQuery);
-    const allTweet = snapshot.docs.map((doc) => {
-      const { tweet, photo, userId, username, createdAt } = doc.data();
-      return { id: doc.id, tweet, photo, userId, username, createdAt };
+    await onSnapshot(tweetsQuery, (sanpshot) => {
+      const allTweet = sanpshot.docs.map((doc) => {
+        const { tweet, photo, userId, username, createdAt } = doc.data();
+        return { id: doc.id, tweet, photo, userId, username, createdAt };
+      });
+      setTweets(allTweet);
     });
-    setTweets(allTweet);
   };
 
   useEffect(() => {
