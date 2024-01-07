@@ -1,6 +1,13 @@
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { Unsubscribe } from 'firebase/auth';
 import { db } from '../firebase';
 import Tweet from './tweet';
 
@@ -22,23 +29,33 @@ export interface ITweet {
 function Timeline() {
   const [tweets, setTweets] = useState<ITweet[]>([]);
 
-  // Firestore에 포스팅 데이터 요청
-  const fetchTweets = async () => {
-    const tweetsQuery = query(
-      collection(db, 'tweets'),
-      orderBy('createdAt', 'desc'),
-    );
-    await onSnapshot(tweetsQuery, (sanpshot) => {
-      const allTweet = sanpshot.docs.map((doc) => {
-        const { tweet, photo, userId, username, createdAt } = doc.data();
-        return { id: doc.id, tweet, photo, userId, username, createdAt };
-      });
-      setTweets(allTweet);
-    });
-  };
-
   useEffect(() => {
+    let unsubscribe: Unsubscribe | null = null;
+    const fetchTweets = async () => {
+      const tweetsQuery = query(
+        collection(db, 'tweets'),
+        orderBy('createdAt', 'desc'),
+        limit(25),
+      );
+      unsubscribe = await onSnapshot(tweetsQuery, (snapshot) => {
+        const allTweet = snapshot.docs.map((doc) => {
+          const { tweet, photo, userId, username, createdAt } = doc.data();
+          return {
+            id: doc.id,
+            tweet,
+            photo,
+            userId,
+            username,
+            createdAt,
+          };
+        });
+        setTweets(allTweet);
+      });
+    };
     fetchTweets();
+    return () => {
+      unsubscribe && unsubscribe();
+    };
   }, []);
 
   return (
