@@ -46,8 +46,8 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   body {
-    background-color: black;
-    color: white;
+    background-color: #ffffff;
+    color: #0f1419;
     font-family:
       system-ui,
       -apple-system,
