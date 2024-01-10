@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import {
   Box,
   Form,
@@ -8,8 +10,40 @@ import {
   Text,
   Wrapper,
 } from '../components/auth-component';
+import { auth } from '../firebase';
 
 function Login() {
+  const navigate = useNavigate();
+
+  const [isLoading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+  };
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isLoading || email === '' || password === '') return;
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (error) {
+      // Error
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Wrapper>
       <Box>
@@ -38,10 +72,24 @@ function Login() {
       <Box>
         <Text>지금 일어나고 있는 일</Text>
         <Text>지금 로그인하세요.</Text>
-        <Form>
-          <Input type='email' placeholder='이메일' required />
-          <Input type='password' placeholder='패스워드' required />
-          <Input value='로그인' type='submit' />
+        <Form onSubmit={onSubmit}>
+          <Input
+            value={email}
+            onChange={onChange}
+            name='email'
+            type='email'
+            placeholder='이메일'
+            required
+          />
+          <Input
+            value={password}
+            onChange={onChange}
+            name='password'
+            type='password'
+            placeholder='패스워드'
+            required
+          />
+          <Input value={isLoading ? '로그인 중...' : '로그인'} type='submit' />
         </Form>
         <Switcher>
           <p>트위터 계정이 없으신가요?</p>
