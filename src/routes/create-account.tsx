@@ -1,8 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import {
   Box,
+  Error,
   Form,
   Input,
   Logo,
@@ -19,6 +21,7 @@ function CreateAccount() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorCode, setErrorCode] = useState('');
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -48,9 +51,30 @@ function CreateAccount() {
       });
       navigate('/');
     } catch (error) {
-      // Error
+      if (error instanceof FirebaseError) setErrorCode(error.code);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleError = () => {
+    switch (errorCode) {
+      case 'auth/user-not-found' || 'auth/wrong-password':
+        return '이메일 혹은 비밀번호가 일치하지 않습니다.';
+      case 'auth/email-already-in-use':
+        return '이미 사용 중인 이메일입니다.';
+      case 'auth/weak-password':
+        return '비밀번호는 6글자 이상이어야 합니다.';
+      case 'auth/network-request-failed':
+        return '네트워크 연결에 실패 하였습니다.';
+      case 'auth/invalid-email':
+        return '잘못된 이메일 형식입니다.';
+      case 'auth/internal-error':
+        return '잘못된 요청입니다.';
+      case 'auth/too-many-requests':
+        return '로그인 시도가 너무 많습니다. 잠시 후에 다시 시도해 주세요.';
+      default:
+        return '회원가입에 실패 하였습니다.';
     }
   };
 
@@ -108,6 +132,7 @@ function CreateAccount() {
             required
           />
           <Input value='계정 만들기' type='submit' />
+          {errorCode !== '' ? <Error>{handleError()}</Error> : null}
         </Form>
         <Switcher>
           <p>이미 트위터에 가입하셨나요?</p>

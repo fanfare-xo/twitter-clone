@@ -1,8 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import {
   Box,
+  Error,
   Form,
   Input,
   Logo,
@@ -18,6 +20,7 @@ function Login() {
   const [isLoading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorCode, setErrorCode] = useState('');
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -38,9 +41,24 @@ function Login() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/');
     } catch (error) {
-      // Error
+      if (error instanceof FirebaseError) {
+        setErrorCode(error.code);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleError = () => {
+    switch (errorCode) {
+      case 'auth/invalid-credential':
+        return '입력하신 로그인 정보가 유효하지 않습니다.';
+      case 'auth/too-many-requests':
+        return '로그인 시도가 너무 많습니다. 잠시 후에 다시 시도해 주세요.';
+      case 'uth/user-not-found':
+        return '해당 이메일 주소로 등록된 계정을 찾을 수 없습니다.';
+      default:
+        return '로그인에 실패 하였습니다.';
     }
   };
 
@@ -90,6 +108,7 @@ function Login() {
             required
           />
           <Input value={isLoading ? '로그인 중...' : '로그인'} type='submit' />
+          {errorCode !== '' ? <Error>{handleError()}</Error> : null}
         </Form>
         <Switcher>
           <p>트위터 계정이 없으신가요?</p>

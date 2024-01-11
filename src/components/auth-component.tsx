@@ -57,6 +57,7 @@ export const Input = styled.input`
   height: 40px;
   border: 1px solid #cfd9de;
   border-radius: 20px;
+  font-size: 14px;
   &:hover {
     background-color: #e6e6e6;
     transition: background-color 0.5s ease;
@@ -85,6 +86,11 @@ export const Input = styled.input`
   }
 `;
 
+export const Error = styled.span`
+  color: #ff3f3f;
+  font-size: 14px;
+`;
+
 export const Switcher = styled.div`
   p {
     padding-bottom: 20px;
@@ -94,8 +100,5 @@ export const Switcher = styled.div`
   a {
     text-decoration: none;
     color: #1d96f0;
-  }
-  span {
-    font-size: 12px;
   }
 `;
