@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import { useEffect, useState } from 'react';
 import Layout from './components/layout';
@@ -48,7 +48,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: #ffffff;
     color: #0f1419;
-    font-family:
+    font-family: 
+      'Noto Sans KR',
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
@@ -63,12 +64,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  height: 100%;
-`;
-
 function App() {
   const [isLoading, setLoading] = useState(true);
 
@@ -81,10 +76,10 @@ function App() {
   }, []);
 
   return (
-    <Wrapper>
+    <>
       <GlobalStyle />
       {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
-    </Wrapper>
+    </>
   );
 }
 
