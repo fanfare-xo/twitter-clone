@@ -3,70 +3,80 @@ import styled from 'styled-components';
 import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { auth, db, storage } from '../firebase';
+import defaultAvatar from '../assets/images/default-profile.png';
+import MediaIcon from '../assets/icons/media.svg?react';
+import GifIcon from '../assets/icons/gif.svg?react';
+import EmojiIcon from '../assets/icons/emoji.svg?react';
+import VoteIcon from '../assets/icons/vote.svg?react';
+import ScheduleIcon from '../assets/icons/schedule.svg?react';
+import LocationIcon from '../assets/icons/location.svg?react';
+
+const Wrapper = styled.div`
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid lightgray;
+`;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  width: 100%;
+`;
+
+const Avatar = styled.img`
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 50%;
 `;
 
 const TextArea = styled.textarea`
-  padding: 20px;
-  width: 100%;
-  border: 2px solid white;
-  border-radius: 20px;
+  height: 50px;
+  line-height: 2;
+  background-color: transparent;
+  border-style: none;
+  outline: none;
   resize: none;
-  background-color: black;
-  color: white;
-  font-size: 16px;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Open Sans',
-    'Helvetica Neue',
-    sans-serif;
+  font-size: 20px;
   &::placeholder {
-    font-size: 16px;
-  }
-  &:focus {
-    outline: none;
-    border-color: #1d9bf0;
+    font-size: 20px;
   }
 `;
 
-const AttachFileButton = styled.label`
-  padding: 10px 0px;
-  border: 1px solid #1d9bf0;
-  border-radius: 20px;
-  color: #1d9bf0;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-`;
-
-const AttachFileInput = styled.input`
-  display: none;
+const ButtonArea = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  input {
+    margin-left: auto;
+  }
+  svg {
+    margin-left: 5px;
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+    fill: #1d9bf0;
+  }
 `;
 
 const SubmitButton = styled.input`
-  padding: 10px 0px;
-  border: none;
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 85px;
+  height: 35px;
+  border-style: none;
+  border-radius: 50px;
   background-color: #1d9bf0;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  &:hover,
-  &:active {
-    opacity: 0.9;
+  &:hover {
+    background-color: #1a8cd8;
+    transition-duration: 0.2s;
   }
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
 `;
 
 function PostTweetForm() {
@@ -108,36 +118,37 @@ function PostTweetForm() {
       setTweet('');
       setFile(null);
     } catch (error) {
-      console.log(error);
+      // Error
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Form onSubmit={onSubmit}>
-      <TextArea
-        value={tweet}
-        onChange={onChange}
-        rows={5}
-        maxLength={180}
-        placeholder='What is happening?!'
-        required
-      />
-      <AttachFileButton htmlFor='attachFile'>
-        {file ? 'Photo added ✅' : 'Add photo'}
-      </AttachFileButton>
-      <AttachFileInput
-        onChange={onFileChange}
-        id='attachFile'
-        accept='image/*'
-        type='file'
-      />
-      <SubmitButton
-        value={isLoading ? 'Posting...' : 'Post Tweet'}
-        type='submit'
-      />
-    </Form>
+    <Wrapper>
+      <Avatar src={defaultAvatar} alt='기본 프로필 이미지' />
+      <Form onSubmit={onSubmit}>
+        <TextArea
+          value={tweet}
+          onChange={onChange}
+          maxLength={280}
+          required
+          placeholder='무슨 일이 일어나고 있나요?'
+        />
+        <ButtonArea>
+          <MediaIcon />
+          <GifIcon />
+          <VoteIcon />
+          <EmojiIcon />
+          <ScheduleIcon />
+          <LocationIcon />
+          <SubmitButton
+            value={isLoading ? '업로드 중...' : '게시하기'}
+            type='submit'
+          />
+        </ButtonArea>
+      </Form>
+    </Wrapper>
   );
 }
 

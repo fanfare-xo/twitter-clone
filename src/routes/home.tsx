@@ -3,17 +3,32 @@ import PostTweetForm from '../components/post-tweet-form';
 import Timeline from '../components/timeline';
 
 const Wrapper = styled.div`
-  display: grid;
-  grid-template-rows: 1fr 5fr;
-  gap: 50px;
-  overflow-y: scroll;
+  display: flex;
+  justify-content: space-between;
+  width: 1000px;
+`;
+
+const PrimaryContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+`;
+
+const Sidebar = styled.div`
+  width: 400px;
+  background-color: #b6e1ff60;
 `;
 
 function Home() {
   return (
     <Wrapper>
-      <PostTweetForm />
-      <Timeline />
+      <PrimaryContent>
+        <PostTweetForm />
+        <Timeline />
+      </PrimaryContent>
+      <Sidebar />
     </Wrapper>
   );
 }
