@@ -10,6 +10,7 @@ import CreateAccount from './routes/create-account';
 import LoadingScreen from './components/loading-screen';
 import { auth } from './firebase';
 import ProtectedRoute from './routes/protected-route';
+import Logout from './routes/logout';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
     path: '/create-account',
     element: <CreateAccount />,
   },
+  {
+    path: '/logout',
+    element: <Logout />,
+  },
 ]);
 
 const GlobalStyle = createGlobalStyle`
@@ -62,6 +67,12 @@ const GlobalStyle = createGlobalStyle`
       'Helvetica Neue',
       sans-serif;
   }
+  a {
+      display: flex;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+    }
 `;
 
 function App() {
