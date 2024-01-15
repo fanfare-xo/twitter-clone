@@ -14,7 +14,6 @@ import Tweet from './tweet';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
 `;
 
 export interface ITweet {

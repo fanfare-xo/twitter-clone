@@ -12,8 +12,8 @@ const PrimaryContent = styled.div`
   display: flex;
   flex-direction: column;
   width: 600px;
-  border-left: 1px solid lightgray;
-  border-right: 1px solid lightgray;
+  border-left: 1px solid #eff3f4;
+  border-right: 1px solid #eff3f4;
 `;
 
 const Sidebar = styled.div`

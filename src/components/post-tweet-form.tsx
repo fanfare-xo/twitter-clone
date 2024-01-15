@@ -14,7 +14,7 @@ import LocationIcon from '../assets/icons/location.svg?react';
 const Wrapper = styled.div`
   display: flex;
   padding: 16px;
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid #eff3f4;
 `;
 
 const Form = styled.form`
