@@ -1,11 +1,15 @@
 import styled from 'styled-components';
-import defaultAvatar from '../assets/images/default-profile.png';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { useState } from 'react';
 import CommentIcon from '../assets/icons/comment.svg?react';
 import RetweetIcon from '../assets/icons/retweet.svg?react';
 import LikeIcon from '../assets/icons/like.svg?react';
 import ViewIcon from '../assets/icons/view.svg?react';
 import BookmarkIcon from '../assets/icons/bookmark.svg?react';
 import ShareIcon from '../assets/icons/share.svg?react';
+import { ITweet } from './timeline';
+import { auth, db, storage } from '../firebase';
 
 const Wrapper = styled.div`
   display: flex;
@@ -23,6 +27,7 @@ const Wrapper = styled.div`
 const Col = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Avatar = styled.div`
@@ -43,19 +48,32 @@ const Writer = styled.div`
     color: #0f1419;
     font-weight: 700;
   }
-  span:last-child {
+  button {
+    all: unset;
     margin-left: auto;
+    cursor: pointer;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    &:hover {
+      background-color: #1d9bf01a;
+    }
   }
 `;
 
 const Text = styled.div`
-  padding-top: 5px;
   padding-bottom: 10px;
 `;
 
 const MediaFIle = styled.div`
+  margin-bottom: 5px;
   img {
     width: 100%;
+    border: 1px solid rgb(207, 217, 222);
     border-radius: 15px;
   }
 `;
@@ -95,66 +113,80 @@ const InteractionBar = styled.div`
   }
 `;
 
-function Tweet() {
+function Tweet({ id, userId, username, tweet, photo, createdAt }: ITweet) {
+  const user = auth.currentUser;
+  const [avatar, setAvatar] = useState<string>('');
+
+  const formatDate = (timestamp: number) => {
+    const dateObject = new Date(timestamp);
+    const month = dateObject.getMonth() + 1;
+    const date = dateObject.getDate();
+    return `${month}월 ${date}일`;
+  };
+
+  const onDelete = async () => {
+    const ok = window.confirm('Are you sure you want to delete this tweet?');
+    if (!ok || user?.uid !== userId) return;
+    try {
+      await deleteDoc(doc(db, 'tweets', id));
+    } catch (error) {
+      //
+    }
+  };
+
+  const userAvatarSample = async (userUid: string) => {
+    const locationRef = ref(storage, `avatar/${userUid}`);
+    const avatarURL = await getDownloadURL(locationRef);
+    await setAvatar(avatarURL);
+  };
+
+  userAvatarSample(userId);
+
   return (
     <Wrapper>
       <Avatar>
-        <img src={defaultAvatar} alt='기본 프로필 사진' />
+        <img src={avatar} alt='사용자 프로필 이미지' />
       </Avatar>
       <Col>
         <Writer>
-          <span>서울시</span>
-          <span>@seoul_city</span>
+          <span>{username}</span>
+          <span>@{userId.slice(0, 10)}</span>
           <span>·</span>
-          <span>1시간</span>
-          <span>…</span>
+          <span>{formatDate(createdAt)}</span>
+          <button onClick={onDelete} type='button'>
+            …
+          </button>
         </Writer>
         <Text>
-          <p>
-            옷이 날개!🪽 취업날개 서비스 이용 꿀팁
-            <br />
-            면접정장 무료 대여하고 취업 성공해용!🐲
-            <br />
-            <br />
-            취준생의 비용 부담을 덜어주기 위해 면접 정장을 무료로 대여해주는
-            #취업날개서비스!
-            <br />
-            고교졸업 예정자~39세 이하 서울시 거주 청년이라면 정장과 넥타이,
-            벨트, 구두까지 대여
-            <br />
-            가능해요!👉http://dressfree.net
-          </p>
+          <p>{tweet}</p>
         </Text>
         <MediaFIle>
-          <img
-            src='https://picsum.photos/seed/picsum/550/300'
-            alt='첨부한 미디어 파일'
-          />
+          {photo ? <img src={photo} alt='첨부한 미디어 파일' /> : null}
         </MediaFIle>
         <InteractionBar>
           <div>
             <p>
               <CommentIcon />
             </p>
-            <span>10</span>
+            <span />
           </div>
           <div>
             <p>
               <RetweetIcon />
             </p>
-            <span>10</span>
+            <span />
           </div>
           <div>
             <p>
               <LikeIcon />
             </p>
-            <span>10</span>
+            <span />
           </div>
           <div>
             <p>
               <ViewIcon />
             </p>
-            <span>10</span>
+            <span />
           </div>
           <div>
             <p>

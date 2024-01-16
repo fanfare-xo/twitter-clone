@@ -13,7 +13,7 @@ import PremiumSVG from '../assets/icons/premium.svg?react';
 import ProfileSVG from '../assets/icons/profile.svg?react';
 import SeeMoreSVG from '../assets/icons/seeMore.svg?react';
 import MoreSVG from '../assets/icons/more.svg?react';
-import profileIMG from '../assets/images/default-profile.png';
+import { auth } from '../firebase';
 
 const Wrapper = styled.div`
   width: 280px;
@@ -133,7 +133,6 @@ const ToggleUserSwitcher = styled(motion.div)`
   height: 110px;
   position: fixed;
   bottom: 85px;
-  left: 400px;
   z-index: 999;
   display: flex;
   flex-direction: column;
@@ -158,6 +157,8 @@ interface HeaderProps {
 }
 
 function Header({ isOverlay, toggleOverlay }: HeaderProps) {
+  const user = auth.currentUser;
+
   return (
     <Wrapper>
       <Container>
@@ -230,10 +231,10 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
         </Navigation>
         <ComposeTweet>게시하기</ComposeTweet>
         <UserSwitcher onClick={toggleOverlay}>
-          <img src={profileIMG} alt='기본 프로필' />
+          <img src={`${user?.photoURL}`} alt='사용자 프로필 이미지' />
           <div>
-            <p>팡파르</p>
-            <p>@fanfare_xo</p>
+            <p>{user?.displayName}</p>
+            <p>@{user?.uid.slice(0, 10)}</p>
           </div>
           <MoreSVG />
         </UserSwitcher>
@@ -249,7 +250,7 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
             <span>기존 계정 추가</span>
           </Link>
           <Link to='/logout'>
-            <span>@fanfare_xo 계정에서 로그아웃</span>
+            <span>@{user?.uid.slice(0, 10)} 계정에서 로그아웃</span>
           </Link>
         </ToggleUserSwitcher>
       )}

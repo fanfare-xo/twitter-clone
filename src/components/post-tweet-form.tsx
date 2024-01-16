@@ -61,6 +61,13 @@ const ButtonArea = styled.div`
   }
 `;
 
+const AttachFileButton = styled.label`
+  cursor: pointer;
+`;
+
+const AttachFileInput = styled.input`
+  display: none;
+`;
 const SubmitButton = styled.input`
   display: flex;
   align-items: center;
@@ -83,6 +90,7 @@ function PostTweetForm() {
   const [isLoading, setLoading] = useState(false);
   const [tweet, setTweet] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const avatarURL = auth.currentUser?.photoURL;
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTweet(event.target.value);
@@ -126,7 +134,7 @@ function PostTweetForm() {
 
   return (
     <Wrapper>
-      <Avatar src={defaultAvatar} alt='기본 프로필 이미지' />
+      <Avatar src={avatarURL || defaultAvatar} alt='기본 프로필 이미지' />
       <Form onSubmit={onSubmit}>
         <TextArea
           value={tweet}
@@ -136,7 +144,15 @@ function PostTweetForm() {
           placeholder='무슨 일이 일어나고 있나요?'
         />
         <ButtonArea>
-          <MediaIcon />
+          <AttachFileButton htmlFor='attachFile'>
+            <MediaIcon />
+          </AttachFileButton>
+          <AttachFileInput
+            onChange={onFileChange}
+            id='attachFile'
+            type='file'
+            accept='image/*'
+          />
           <GifIcon />
           <VoteIcon />
           <EmojiIcon />
