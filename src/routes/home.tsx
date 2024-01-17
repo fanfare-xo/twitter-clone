@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import PostTweetForm from '../components/post-tweet-form';
 import Timeline from '../components/timeline';
+import SidePanel from '../components/side-panel';
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  width: 1000px;
+  flex-direction: row;
+  gap: 30px;
 `;
 
 const PrimaryContent = styled.div`
@@ -16,11 +17,6 @@ const PrimaryContent = styled.div`
   border-right: 1px solid #eff3f4;
 `;
 
-const Sidebar = styled.div`
-  width: 400px;
-  background-color: #b6e1ff60;
-`;
-
 function Home() {
   return (
     <Wrapper>
@@ -28,7 +24,7 @@ function Home() {
         <PostTweetForm />
         <Timeline />
       </PrimaryContent>
-      <Sidebar />
+      <SidePanel />
     </Wrapper>
   );
 }
