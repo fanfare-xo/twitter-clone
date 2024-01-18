@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -13,6 +13,7 @@ import LocationIcon from '../assets/icons/location.svg?react';
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: row;
   padding: 16px;
   border-bottom: 1px solid #eff3f4;
 `;
@@ -20,7 +21,6 @@ const Wrapper = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const Avatar = styled.img`
@@ -31,9 +31,9 @@ const Avatar = styled.img`
 `;
 
 const TextArea = styled.textarea`
-  height: 50px;
-  line-height: 2;
-  background-color: transparent;
+  width: 500px;
+  min-height: 50px;
+  overflow-y: hidden;
   border-style: none;
   outline: none;
   resize: none;
@@ -41,6 +41,15 @@ const TextArea = styled.textarea`
   &::placeholder {
     font-size: 20px;
   }
+`;
+
+const AlertNotice = styled.div`
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: rgb(234, 250, 255);
 `;
 
 const ButtonArea = styled.div`
@@ -68,6 +77,7 @@ const AttachFileButton = styled.label`
 const AttachFileInput = styled.input`
   display: none;
 `;
+
 const SubmitButton = styled.input`
   display: flex;
   align-items: center;
@@ -77,6 +87,7 @@ const SubmitButton = styled.input`
   border-style: none;
   border-radius: 50px;
   background-color: #1d9bf0;
+  cursor: pointer;
   &:hover {
     background-color: #1a8cd8;
     transition-duration: 0.2s;
@@ -90,10 +101,15 @@ function PostTweetForm() {
   const [isLoading, setLoading] = useState(false);
   const [tweet, setTweet] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [textLength, setTextLength] = useState<number | null>(0);
+
   const avatarURL = auth.currentUser?.photoURL;
+  const textarea = useRef<HTMLTextAreaElement | null>(null);
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textCount = event.target.value.length;
     setTweet(event.target.value);
+    setTextLength(textCount);
   };
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,17 +148,31 @@ function PostTweetForm() {
     }
   };
 
+  const onResize = () => {
+    if (textarea.current) {
+      textarea.current.style.height = 'auto';
+      textarea.current.style.height = `${textarea.current.scrollHeight}px`;
+    }
+  };
+
   return (
     <Wrapper>
       <Avatar src={avatarURL || defaultAvatar} alt='기본 프로필 이미지' />
       <Form onSubmit={onSubmit}>
         <TextArea
           value={tweet}
+          ref={textarea}
+          onInput={onResize}
           onChange={onChange}
           maxLength={280}
           required
           placeholder='무슨 일이 일어나고 있나요?'
         />
+        {textLength === null || textLength >= 280 ? (
+          <AlertNotice>
+            🔔 너무 많은 글자를 입력했어요. 더 간결하게 작성해 주세요.
+          </AlertNotice>
+        ) : null}
         <ButtonArea>
           <AttachFileButton htmlFor='attachFile'>
             <MediaIcon />
