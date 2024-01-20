@@ -15,6 +15,10 @@ export const Overlay = styled.div`
   height: 100%;
 `;
 
+const Body = styled.div`
+  width: 1000px;
+`;
+
 function Layout() {
   const [isOverlay, setOverlay] = useState(false);
   const toggleOverlay = () => {
@@ -25,7 +29,9 @@ function Layout() {
     <Wrapper>
       {isOverlay && <Overlay onClick={toggleOverlay} />}
       <Header isOverlay={isOverlay} toggleOverlay={toggleOverlay} />
-      <Outlet />
+      <Body>
+        <Outlet />
+      </Body>
     </Wrapper>
   );
 }

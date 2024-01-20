@@ -11,6 +11,7 @@ import LoadingScreen from './components/loading-screen';
 import { auth } from './firebase';
 import ProtectedRoute from './routes/protected-route';
 import Logout from './routes/logout';
+import ComingSoon from './routes/coming-soon';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'coming-soon',
+        element: <ComingSoon />,
       },
     ],
   },

@@ -175,43 +175,43 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <SearchSVG />
                 탐색하기
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <AlertSVG />
                 알림
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <MessageSVG />
                 쪽지
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <ListSVG />
                 리스트
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <BookmarkSVG />
                 북마크
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <CommunitySVG />
                 커뮤니티
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <PremiumSVG />
                 Premium
               </Link>
@@ -223,7 +223,7 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
               </Link>
             </li>
             <li>
-              <Link to='/'>
+              <Link to='/coming-soon'>
                 <SeeMoreSVG />더 보기
               </Link>
             </li>
