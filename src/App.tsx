@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
 import Layout from './components/layout';
 import Home from './routes/home';
 import Profile from './routes/profile';
@@ -12,6 +13,7 @@ import { auth } from './firebase';
 import ProtectedRoute from './routes/protected-route';
 import Logout from './routes/logout';
 import ComingSoon from './routes/coming-soon';
+import { store } from './redux/store';
 
 const router = createBrowserRouter([
   {
@@ -92,10 +94,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <Provider store={store}>
       <GlobalStyle />
       {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
-    </>
+    </Provider>
   );
 }
 

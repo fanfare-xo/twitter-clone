@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
+import { useDispatch } from 'react-redux';
 import {
   Box,
   Error,
@@ -13,9 +14,11 @@ import {
   Wrapper,
 } from '../components/auth-component';
 import { auth } from '../firebase';
+import { completeSignup } from '../redux/modules/signup-slice';
 
 function CreateAccount() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isLoading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
@@ -54,6 +57,7 @@ function CreateAccount() {
       if (error instanceof FirebaseError) setErrorCode(error.code);
     } finally {
       setLoading(false);
+      dispatch(completeSignup());
     }
   };
 

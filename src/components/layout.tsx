@@ -1,7 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Header from './header';
+import WelcomeModal from './welcome-modal';
+import { RootState } from '../redux/store';
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,6 +23,7 @@ const Body = styled.div`
 `;
 
 function Layout() {
+  const signup = useSelector((state: RootState) => state.signup.isComplete);
   const [isOverlay, setOverlay] = useState(false);
   const toggleOverlay = () => {
     setOverlay((prev) => !prev);
@@ -28,6 +32,7 @@ function Layout() {
   return (
     <Wrapper>
       {isOverlay && <Overlay onClick={toggleOverlay} />}
+      {signup && <WelcomeModal />}
       <Header isOverlay={isOverlay} toggleOverlay={toggleOverlay} />
       <Body>
         <Outlet />
