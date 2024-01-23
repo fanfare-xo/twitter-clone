@@ -97,6 +97,10 @@ const ButtonArea = styled.div`
     width: 16px;
     height: 16px;
     fill: #1d9bf0;
+    &:hover {
+      cursor: pointer;
+      opacity: 0.6;
+    }
   }
 `;
 
@@ -106,6 +110,12 @@ const AttachFileButton = styled.label`
 
 const AttachFileInput = styled.input`
   display: none;
+`;
+
+const EmojiModal = styled.div<{ y: number }>`
+  position: fixed;
+  top: ${(props) => props.y + 20}px;
+  width: 350px;
 `;
 
 const SubmitButton = styled.input`
@@ -133,6 +143,7 @@ function PostTweetForm() {
   const [file, setFile] = useState<File | null>(null);
   const [textLength, setTextLength] = useState<number | null>(0);
   const [isOpenEmoji, setOpenEmoji] = useState(false);
+  const [xy, setXy] = useState({ x: 0, y: 0 });
 
   const avatarURL = auth.currentUser?.photoURL;
   const textarea = useRef<HTMLTextAreaElement | null>(null);
@@ -195,8 +206,10 @@ function PostTweetForm() {
     }
   };
 
-  const onOpenEmojiModal = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onOpenEmojiModal = (event: any) => {
     setOpenEmoji(true);
+    setXy({ x: event.clientX, y: event.clientY });
   };
 
   const onCloseEmojiModal = () => {
@@ -218,9 +231,27 @@ function PostTweetForm() {
         onCloseEmojiModal();
       }
     };
+
+    let prevScrollY = window.scrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrolled = currentScrollY !== prevScrollY;
+      if (isOpenEmoji) {
+        if (scrolled) {
+          setOpenEmoji(false);
+        }
+      }
+      prevScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousedown', click);
-    return () => window.removeEventListener('mousedown', click);
-  }, [emojiModalRef, textarea]);
+
+    return () => {
+      window.removeEventListener('mousedown', click);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [emojiModalRef, textarea, isOpenEmoji]);
 
   return (
     <Wrapper>
@@ -267,9 +298,9 @@ function PostTweetForm() {
           />
         </ButtonArea>
         {isOpenEmoji && (
-          <div ref={emojiModalRef} style={{ width: '350px' }}>
+          <EmojiModal ref={emojiModalRef} y={xy.y}>
             <EmojiPicker onEmojiClick={onEmojiClick} height={365} />
-          </div>
+          </EmojiModal>
         )}
       </Form>
     </Wrapper>
