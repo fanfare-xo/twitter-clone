@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
 import TwitterSVG from '../assets/icons/twitter.svg?react';
 import HomeSVG from '../assets/icons/home.svg?react';
 import SearchSVG from '../assets/icons/search.svg?react';
@@ -14,6 +15,8 @@ import ProfileSVG from '../assets/icons/profile.svg?react';
 import SeeMoreSVG from '../assets/icons/seeMore.svg?react';
 import MoreSVG from '../assets/icons/more.svg?react';
 import { auth } from '../firebase';
+import { RootState } from '../redux/store';
+import { toggleOverlay } from '../redux/modules/overlay-slice';
 
 const Wrapper = styled.div`
   width: 280px;
@@ -151,12 +154,10 @@ const ToggleUserSwitcher = styled(motion.div)`
     background-color: rgba(247, 249, 249, 1);
   }
 `;
-interface HeaderProps {
-  isOverlay: boolean;
-  toggleOverlay: () => void;
-}
 
-function Header({ isOverlay, toggleOverlay }: HeaderProps) {
+function Header() {
+  const dispatch = useDispatch();
+  const overlay = useSelector((state: RootState) => state.overlay.isActive);
   const user = auth.currentUser;
 
   return (
@@ -230,7 +231,7 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
           </ul>
         </Navigation>
         <ComposeTweet>게시하기</ComposeTweet>
-        <UserSwitcher onClick={toggleOverlay}>
+        <UserSwitcher onClick={() => dispatch(toggleOverlay())}>
           <img src={`${user?.photoURL}`} alt='사용자 프로필 이미지' />
           <div>
             <p>{user?.displayName}</p>
@@ -239,7 +240,7 @@ function Header({ isOverlay, toggleOverlay }: HeaderProps) {
           <MoreSVG />
         </UserSwitcher>
       </Container>
-      {isOverlay && (
+      {overlay && (
         <ToggleUserSwitcher
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

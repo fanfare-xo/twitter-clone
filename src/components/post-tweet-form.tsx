@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { auth, db, storage } from '../firebase';
 import defaultAvatar from '../assets/images/default-profile.png';
 import MediaIcon from '../assets/icons/media.svg?react';
@@ -131,10 +132,12 @@ function PostTweetForm() {
   const [tweet, setTweet] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [textLength, setTextLength] = useState<number | null>(0);
+  const [isOpenEmoji, setOpenEmoji] = useState(false);
 
   const avatarURL = auth.currentUser?.photoURL;
   const textarea = useRef<HTMLTextAreaElement | null>(null);
   const previewRef = useRef<HTMLImageElement | null>(null);
+  const emojiModalRef = useRef<HTMLDivElement>(null);
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textCount = event.target.value.length;
@@ -192,6 +195,33 @@ function PostTweetForm() {
     }
   };
 
+  const onOpenEmojiModal = () => {
+    setOpenEmoji(true);
+  };
+
+  const onCloseEmojiModal = () => {
+    setOpenEmoji(false);
+  };
+
+  const onEmojiClick = (data: EmojiClickData) => {
+    setTweet((prev) => prev + data.emoji);
+  };
+
+  useEffect(() => {
+    const click = (event: MouseEvent) => {
+      if (
+        emojiModalRef.current &&
+        !emojiModalRef.current?.contains(event.target as Node) &&
+        textarea.current &&
+        !textarea.current?.contains(event.target as Node)
+      ) {
+        onCloseEmojiModal();
+      }
+    };
+    window.addEventListener('mousedown', click);
+    return () => window.removeEventListener('mousedown', click);
+  }, [emojiModalRef, textarea]);
+
   return (
     <Wrapper>
       <Avatar src={avatarURL || defaultAvatar} alt='기본 프로필 이미지' />
@@ -228,7 +258,7 @@ function PostTweetForm() {
           />
           <GifIcon />
           <VoteIcon />
-          <EmojiIcon />
+          <EmojiIcon onClick={onOpenEmojiModal} />
           <ScheduleIcon />
           <LocationIcon />
           <SubmitButton
@@ -236,6 +266,11 @@ function PostTweetForm() {
             type='submit'
           />
         </ButtonArea>
+        {isOpenEmoji && (
+          <div ref={emojiModalRef} style={{ width: '350px' }}>
+            <EmojiPicker onEmojiClick={onEmojiClick} height={365} />
+          </div>
+        )}
       </Form>
     </Wrapper>
   );

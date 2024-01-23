@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from './header';
 import WelcomeModal from './welcome-modal';
 import { RootState } from '../redux/store';
+import { toggleOverlay } from '../redux/modules/overlay-slice';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,6 +16,7 @@ export const Overlay = styled.div`
   z-index: 999;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
 `;
 
 const Body = styled.div`
@@ -23,17 +24,15 @@ const Body = styled.div`
 `;
 
 function Layout() {
+  const dispatch = useDispatch();
+  const overlay = useSelector((state: RootState) => state.overlay.isActive);
   const signup = useSelector((state: RootState) => state.signup.isComplete);
-  const [isOverlay, setOverlay] = useState(false);
-  const toggleOverlay = () => {
-    setOverlay((prev) => !prev);
-  };
 
   return (
     <Wrapper>
-      {isOverlay && <Overlay onClick={toggleOverlay} />}
+      {overlay && <Overlay onClick={() => dispatch(toggleOverlay())} />}
       {signup && <WelcomeModal />}
-      <Header isOverlay={isOverlay} toggleOverlay={toggleOverlay} />
+      <Header />
       <Body>
         <Outlet />
       </Body>
