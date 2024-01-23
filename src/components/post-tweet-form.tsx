@@ -10,6 +10,7 @@ import EmojiIcon from '../assets/icons/emoji.svg?react';
 import VoteIcon from '../assets/icons/vote.svg?react';
 import ScheduleIcon from '../assets/icons/schedule.svg?react';
 import LocationIcon from '../assets/icons/location.svg?react';
+import CancelIcon from '../assets/icons/cancel.svg?react';
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,6 +51,34 @@ const AlertNotice = styled.div`
   border-radius: 8px;
   font-size: 14px;
   background-color: rgb(234, 250, 255);
+`;
+
+const PreviewFile = styled.div`
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  img {
+    width: 100%;
+    border-radius: 15px;
+  }
+  svg {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 999;
+    width: 30px;
+    height: 30px;
+    padding: 8px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.4);
+    fill: white;
+    &:hover {
+      opacity: 1;
+      transition-duration: 0.3s;
+      background-color: rgba(0, 0, 0, 0.8);
+      fill: white;
+    }
+  }
 `;
 
 const ButtonArea = styled.div`
@@ -105,6 +134,7 @@ function PostTweetForm() {
 
   const avatarURL = auth.currentUser?.photoURL;
   const textarea = useRef<HTMLTextAreaElement | null>(null);
+  const previewRef = useRef<HTMLImageElement | null>(null);
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textCount = event.target.value.length;
@@ -115,6 +145,13 @@ function PostTweetForm() {
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (files && files.length === 1) {
+      const fileReader = new FileReader();
+      fileReader.onload = (image) => {
+        if (previewRef.current) {
+          previewRef.current.src = image.target?.result as string;
+        }
+      };
+      fileReader.readAsDataURL(files[0]);
       setFile(files[0]);
     }
   };
@@ -173,6 +210,12 @@ function PostTweetForm() {
             🔔 너무 많은 글자를 입력했어요. 더 간결하게 작성해 주세요.
           </AlertNotice>
         ) : null}
+        {file && (
+          <PreviewFile>
+            <img ref={previewRef} alt='media file preview' />
+            <CancelIcon onClick={() => setFile(null)} />
+          </PreviewFile>
+        )}
         <ButtonArea>
           <AttachFileButton htmlFor='attachFile'>
             <MediaIcon />
